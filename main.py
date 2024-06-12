@@ -3,9 +3,9 @@ import pygame as pg
 
 pg.init()
 clock = pg.time.Clock()
-tps = 20
+tps = 40
 
-SIZE = 800  # cell size 50
+SIZE = 800  # cell size 25
 sc = pg.display.set_mode((SIZE, SIZE))
 pg.display.set_caption("anotherLife")
 
@@ -13,7 +13,7 @@ is_setting_rules = True
 is_setting_cells = False
 running = False
 
-board = []
+board = list()
 rules = [{3}, {2, 3}]  # B/S
 active1 = False
 active2 = False
@@ -26,8 +26,12 @@ allowed_symbols = [ord(str(i)) for i in range(10)]
 myfont = pg.font.Font("fonts/Sonic Logo RUS/Sonic Logo Bold RUS by vania5617sonfan.ttf", 100)
 _myfont = pg.font.Font("fonts/Sonic Logo RUS/Sonic Logo Bold RUS by vania5617sonfan.ttf", 80)
 
+btns = [pg.transform.scale(pg.image.load("img/btn.png"), (200, 100)), pg.transform.scale(pg.image.load("img/btn_hover.png"), (200, 100))]
+currbtn = 0
+
 frame = 0
 flag = True
+fl = True
 
 while True:
     sc.fill("White")
@@ -42,25 +46,50 @@ while True:
         text2_surf = _myfont.render(text2, True, "Black")
         sc.blit(text1_surf, (160, 205))
         sc.blit(text2_surf, (160, 505))
+        sc.blit(btns[currbtn], (300, 650))
 
         if active1:
             if flag:
                 frame = 0
             flag = False
             frame += 1
-            if frame == 20:
+            if frame == tps:
                 frame = 0
-            if frame <= 10:
+            if frame <= tps//2:
                 cursor1 = pg.draw.rect(sc, "Black", (150 + text1_surf.get_width() + 10, 210, 5, 80))
         if active2:
             if not flag:
                 frame = 0
             flag = True
             frame += 1
-            if frame == 20:
+            if frame == tps:
                 frame = 0
-            if frame <= 10:
+            if frame <= tps//2:
                 cursor2 = pg.draw.rect(sc, "Black", (150 + text2_surf.get_width() + 10, 510, 5, 80))
+
+        btn_rect = pg.rect.Rect(300, 650, 200, 100)
+        if btn_rect.collidepoint(pg.mouse.get_pos()):
+            currbtn = 1
+        else:
+            currbtn = 0
+    elif is_setting_cells:
+        for x in range(32):
+            for y in range(32):
+                pg.draw.rect(sc, "Grey", (x*25, y*25, 25, 25), 1)
+
+        for cell in board:
+            pg.draw.rect(sc, "Black", (cell[0]*25, cell[1]*25, 25, 25))
+
+        pos = pg.mouse.get_pos()
+        if pg.mouse.get_pressed()[0]:
+            if not fl:
+                new_cell_coords = [pos[0] // 25, pos[1] // 25]
+                if new_cell_coords not in board:
+                    board.append(new_cell_coords)
+        elif pg.mouse.get_pressed()[2]:
+            del_cell_coords = [pos[0] // 25, pos[1] // 25]
+            if del_cell_coords in board:
+                board.remove(del_cell_coords)
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -98,6 +127,16 @@ while True:
                 else:
                     active1 = False
                     active2 = False
+
+                btn_rect = pg.rect.Rect(300, 650, 200, 100)
+                if btn_rect.collidepoint(pos):
+                    if text1 and text2:
+                        is_setting_rules = False
+                        is_setting_cells = True
+                        fl = True
+        if event.type == pg.MOUSEBUTTONUP:
+            if is_setting_cells:
+                fl = False
 
     clock.tick(tps)
     pg.display.update()
