@@ -137,10 +137,10 @@ while True:
                 if is_setting_cells:
                     is_setting_cells = False
                     running = True
-            if event.key == pg.K_UP:
+            if event.key == pg.K_DOWN:
                 speed += 1
                 print(speed)
-            if event.key == pg.K_DOWN:
+            if event.key == pg.K_UP:
                 if speed >= 2:
                     speed -= 1
                 print(speed)
