@@ -21,7 +21,9 @@ text1 = ""
 text2 = ""
 textbox1 = pg.draw.rect(sc, "Black", (150, 200, 600, 100), 5)
 textbox2 = pg.draw.rect(sc, "Black", (150, 500, 600, 100), 5)
-allowed_symbols = [ord(str(i)) for i in range(10)]
+allowed_symbols = [ord(str(i)) for i in range(9)]
+
+speed = 10
 
 myfont = pg.font.Font("fonts/Sonic Logo RUS/Sonic Logo Bold RUS by vania5617sonfan.ttf", 100)
 _myfont = pg.font.Font("fonts/Sonic Logo RUS/Sonic Logo Bold RUS by vania5617sonfan.ttf", 80)
@@ -100,7 +102,7 @@ while True:
             pg.draw.rect(sc, "Black", (draw_cell[0]*25, draw_cell[1]*25, 25, 25))
 
         f += 1
-        if f == 10:
+        if f >= speed:
             f = 0
             next_generation = []
             for x in range(32):
@@ -135,7 +137,13 @@ while True:
                 if is_setting_cells:
                     is_setting_cells = False
                     running = True
-
+            if event.key == pg.K_UP:
+                speed += 1
+                print(speed)
+            if event.key == pg.K_DOWN:
+                if speed >= 2:
+                    speed -= 1
+                print(speed)
             if event.key in allowed_symbols:
                 if active1:
                     if chr(event.key) not in text1:
@@ -165,11 +173,10 @@ while True:
 
                 btn_rect = pg.rect.Rect(300, 650, 200, 100)
                 if btn_rect.collidepoint(pos):
-                    if text1 and text2:
-                        rules = [[int(i) for i in text1], [int(j) for j in text2]]
-                        is_setting_rules = False
-                        is_setting_cells = True
-                        fl = True
+                    rules = [[int(i) for i in text1], [int(j) for j in text2]]
+                    is_setting_rules = False
+                    is_setting_cells = True
+                    fl = True
         if event.type == pg.MOUSEBUTTONUP:
             if is_setting_cells:
                 fl = False
