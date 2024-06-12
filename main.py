@@ -14,7 +14,7 @@ is_setting_cells = False
 running = False
 
 board = list()
-rules = [{3}, {2, 3}]  # B/S
+rules = []  # B/S
 active1 = False
 active2 = False
 text1 = ""
@@ -32,6 +32,7 @@ currbtn = 0
 frame = 0
 flag = True
 fl = True
+f = 0
 
 while True:
     sc.fill("White")
@@ -90,6 +91,35 @@ while True:
             del_cell_coords = [pos[0] // 25, pos[1] // 25]
             if del_cell_coords in board:
                 board.remove(del_cell_coords)
+    else:
+        for x in range(32):
+            for y in range(32):
+                pg.draw.rect(sc, "Grey", (x*25, y*25, 25, 25), 1)
+
+        for draw_cell in board:
+            pg.draw.rect(sc, "Black", (draw_cell[0]*25, draw_cell[1]*25, 25, 25))
+
+        f += 1
+        if f == 10:
+            f = 0
+            next_generation = []
+            for x in range(32):
+                for y in range(32):
+                    neighbours = []
+                    for new_neighbour in [[x-1, y-1], [x-1, y], [x-1, y+1],
+                                          [x, y-1],               [x, y+1],
+                                          [x+1, y-1], [x+1, y], [x+1, y+1]]:
+                        if 0 <= new_neighbour[0] <= 31 and 0 <= new_neighbour[1] <= 31 and new_neighbour in board:
+                            neighbours.append(new_neighbour)
+
+                    if [x, y] in board:
+                        if len(neighbours) in rules[1]:
+                            next_generation.append([x, y])
+                    else:
+                        if len(neighbours) in rules[0]:
+                            next_generation.append([x, y])
+
+            board = next_generation
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -101,6 +131,11 @@ while True:
                 running = False
                 is_setting_cells = False
                 is_setting_rules = True
+            if event.key == pg.K_RETURN:
+                if is_setting_cells:
+                    is_setting_cells = False
+                    running = True
+
             if event.key in allowed_symbols:
                 if active1:
                     if chr(event.key) not in text1:
@@ -131,6 +166,7 @@ while True:
                 btn_rect = pg.rect.Rect(300, 650, 200, 100)
                 if btn_rect.collidepoint(pos):
                     if text1 and text2:
+                        rules = [[int(i) for i in text1], [int(j) for j in text2]]
                         is_setting_rules = False
                         is_setting_cells = True
                         fl = True
