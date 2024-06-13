@@ -6,7 +6,6 @@ clock = pg.time.Clock()
 tps = 40
 
 SIZE = 800  # cell size 25, 25*50
-SIZE = 800
 sc = pg.display.set_mode((SIZE, SIZE))
 pg.display.set_caption("anotherLife")
 
@@ -101,6 +100,17 @@ while True:
 
         for draw_cell in board:
             pg.draw.rect(sc, "Black", (draw_cell[0]*25, draw_cell[1]*25, 25, 25))
+
+        pos = pg.mouse.get_pos()
+        if pg.mouse.get_pressed()[0]:
+            if not fl:
+                new_cell_coords = [pos[0] // 25, pos[1] // 25]
+                if new_cell_coords not in board:
+                    board.append(new_cell_coords)
+        elif pg.mouse.get_pressed()[2]:
+            del_cell_coords = [pos[0] // 25, pos[1] // 25]
+            if del_cell_coords in board:
+                board.remove(del_cell_coords)
 
         f += 1
         if f >= speed:
