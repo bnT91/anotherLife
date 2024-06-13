@@ -5,7 +5,8 @@ pg.init()
 clock = pg.time.Clock()
 tps = 40
 
-SIZE = 800  # cell size 25
+SIZE = 800  # cell size 25, 25*50
+SIZE = 800
 sc = pg.display.set_mode((SIZE, SIZE))
 pg.display.set_caption("anotherLife")
 
@@ -76,7 +77,7 @@ while True:
         else:
             currbtn = 0
     elif is_setting_cells:
-        for x in range(32):
+        for x in range(50):
             for y in range(32):
                 pg.draw.rect(sc, "Grey", (x*25, y*25, 25, 25), 1)
 
@@ -94,7 +95,7 @@ while True:
             if del_cell_coords in board:
                 board.remove(del_cell_coords)
     else:
-        for x in range(32):
+        for x in range(50):
             for y in range(32):
                 pg.draw.rect(sc, "Grey", (x*25, y*25, 25, 25), 1)
 
@@ -105,13 +106,13 @@ while True:
         if f >= speed:
             f = 0
             next_generation = []
-            for x in range(32):
+            for x in range(50):
                 for y in range(32):
                     neighbours = []
                     for new_neighbour in [[x-1, y-1], [x-1, y], [x-1, y+1],
                                           [x, y-1],               [x, y+1],
                                           [x+1, y-1], [x+1, y], [x+1, y+1]]:
-                        if 0 <= new_neighbour[0] <= 31 and 0 <= new_neighbour[1] <= 31 and new_neighbour in board:
+                        if 0 <= new_neighbour[0] <= 50 and 0 <= new_neighbour[1] <= 31 and new_neighbour in board:
                             neighbours.append(new_neighbour)
 
                     if [x, y] in board:
@@ -139,11 +140,9 @@ while True:
                     running = True
             if event.key == pg.K_DOWN:
                 speed += 1
-                print(speed)
             if event.key == pg.K_UP:
                 if speed >= 2:
                     speed -= 1
-                print(speed)
             if event.key in allowed_symbols:
                 if active1:
                     if chr(event.key) not in text1:
@@ -177,6 +176,7 @@ while True:
                     is_setting_rules = False
                     is_setting_cells = True
                     fl = True
+                    sc = pg.display.set_mode((1250, 800))
         if event.type == pg.MOUSEBUTTONUP:
             if is_setting_cells:
                 fl = False
