@@ -134,6 +134,7 @@ while True:
                 running = False
                 is_setting_cells = False
                 is_setting_rules = True
+                sc = pg.display.set_mode((SIZE, SIZE))
             if event.key == pg.K_RETURN:
                 if is_setting_cells:
                     is_setting_cells = False
